@@ -14,6 +14,9 @@ import os
 import sys
 from pathlib import Path
 
+# Force stable HTTP/1.1 to avoid Windows HTTP/2 connection reset (WinError 10054)
+os.environ["HTTPCORE_NO_HTTP2"] = "1"
+
 try:
     import truststore
     truststore.inject_into_ssl()
