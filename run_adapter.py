@@ -64,6 +64,16 @@ def main():
         config["deep_think_provider"] = "google"
         config["deep_think_llm"] = "gemini-2.5-pro"
 
+    # Multi-Key Quota Optimization:
+    # If a secondary Gemini key is provided, distribute keys across tiers
+    # to avoid rate-limiting between parallel analysts and deep debate.
+    key1 = os.environ.get("GOOGLE_API_KEY")
+    key2 = os.environ.get("GOOGLE_API_KEY_SECONDARY")
+    if key1 and key2 and config.get("quick_think_provider") == "google" and config.get("deep_think_provider") == "google":
+        print(f"[*] Dual-Key optimization enabled: Distributing API load across both Gemini keys.")
+        config["quick_think_api_key"] = key1
+        config["deep_think_api_key"] = key2
+
     analyst_list = [a.strip() for a in args.analysts.split(",") if a.strip()]
 
     print(f"[*] Initializing TradingAgents Multi-Agent Graph for {ticker} as of {trade_date}...")
