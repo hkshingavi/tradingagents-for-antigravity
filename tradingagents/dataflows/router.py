@@ -38,6 +38,22 @@ from tradingagents.dataflows.vendors.yahoo.market import (
     get_YFin_data_online,
 )
 from tradingagents.dataflows.vendors.yahoo.news import get_global_news_yfinance, get_news_yfinance
+from tradingagents.dataflows.vendors.fmp import (
+    get_fmp_stock,
+    get_fmp_fundamentals,
+    get_fmp_balance_sheet,
+    get_fmp_cashflow,
+    get_fmp_income_statement,
+    get_fmp_news,
+)
+from tradingagents.dataflows.vendors.tiingo import (
+    get_tiingo_stock,
+    get_tiingo_news,
+)
+from tradingagents.dataflows.vendors.openbb import (
+    get_openbb_stock,
+    get_openbb_fundamentals,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -99,6 +115,9 @@ VENDOR_METHODS = {
     "get_stock_data": {
         "alpha_vantage": get_alpha_vantage_stock,
         "yfinance": get_YFin_data_online,
+        "fmp": get_fmp_stock,
+        "tiingo": get_tiingo_stock,
+        "openbb": get_openbb_stock,
     },
     # technical_indicators
     "get_indicators": {
@@ -109,26 +128,33 @@ VENDOR_METHODS = {
     "get_fundamentals": {
         "alpha_vantage": get_alpha_vantage_fundamentals,
         "yfinance": get_yfinance_fundamentals,
+        "fmp": get_fmp_fundamentals,
+        "openbb": get_openbb_fundamentals,
     },
     "get_balance_sheet": {
         "alpha_vantage": get_alpha_vantage_balance_sheet,
         "sec_edgar": get_sec_edgar_balance_sheet,
         "yfinance": get_yfinance_balance_sheet,
+        "fmp": get_fmp_balance_sheet,
     },
     "get_cashflow": {
         "alpha_vantage": get_alpha_vantage_cashflow,
         "sec_edgar": get_sec_edgar_cashflow,
         "yfinance": get_yfinance_cashflow,
+        "fmp": get_fmp_cashflow,
     },
     "get_income_statement": {
         "alpha_vantage": get_alpha_vantage_income_statement,
         "sec_edgar": get_sec_edgar_income_statement,
         "yfinance": get_yfinance_income_statement,
+        "fmp": get_fmp_income_statement,
     },
     # news_data
     "get_news": {
         "alpha_vantage": get_alpha_vantage_news,
         "yfinance": get_news_yfinance,
+        "fmp": get_fmp_news,
+        "tiingo": get_tiingo_news,
     },
     "get_global_news": {
         "yfinance": get_global_news_yfinance,
