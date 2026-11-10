@@ -15,6 +15,18 @@ from typing import Any
 import pandas as pd
 import requests
 
+try:
+    import truststore
+    truststore.inject_into_ssl()
+except Exception:
+    pass
+
+try:
+    from dotenv import load_dotenv
+    load_dotenv()
+except ImportError:
+    pass
+
 from tradingagents.dataflows.errors import VendorNotConfiguredError, VendorError, NoMarketDataError
 
 logger = logging.getLogger(__name__)
@@ -53,8 +65,9 @@ def get_tiingo_stock(symbol: str, start_date: str, end_date: str) -> str:
             raise NoMarketDataError(f"No price data found for {symbol} on Tiingo between {start_date} and {end_date}")
 
         df = pd.DataFrame(data)
-        df["date"] = pd.to_datetime(df["date"])
-        df.set_index("date", inplace=True)
+        if "date" in df.columns:
+            df["date"] = pd.to_datetime(df["date"])
+            df.set_index("date", inplace=True)
         header = f"# Tiingo Stock Data for {symbol} from {start_date} to {end_date}\n"
         return header + df.to_csv()
     except requests.exceptions.RequestException as e:
