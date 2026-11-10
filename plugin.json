@@ -1,0 +1,17 @@
+{
+  "name": "tradingagents-for-antigravity",
+  "displayName": "TradingAgents for Antigravity",
+  "version": "1.0.0",
+  "description": "Multi-agent LLM financial trading framework for Google Antigravity: 5 specialized agent teams, adversarial Bull/Bear debate, point-in-time backtesting, and dual-tier model optimization (Gemini Flash + Gemini Pro or Ollama).",
+  "author": {
+    "name": "Harshad Shingavi",
+    "url": "https://github.com/hkshingavi"
+  },
+  "homepage": "https://github.com/hkshingavi/tradingagents-for-antigravity",
+  "repository": "https://github.com/hkshingavi/tradingagents-for-antigravity",
+  "suggestedPrompts": [
+    "Run a TradingAgents multi-agent analysis on NVDA using Gemini",
+    "Analyze RELIANCE.NS stock using the Bull vs Bear debate team",
+    "Offload the market analysts to local Ollama and run TradingAgents on TSLA"
+  ]
+}
