@@ -14,6 +14,12 @@ import os
 import sys
 from pathlib import Path
 
+try:
+    import truststore
+    truststore.inject_into_ssl()
+except Exception:
+    pass
+
 # Ensure package root is in path
 ROOT = Path(__file__).parent.resolve()
 sys.path.insert(0, str(ROOT))
@@ -60,13 +66,13 @@ def main():
     if args.deep_llm:
         config["deep_think_llm"] = args.deep_llm
 
-    # Default to Google Gemini Flash/Pro if no overrides
+    # Default to Google Gemini 3.5 Flash if no overrides
     if not config.get("quick_think_provider"):
         config["quick_think_provider"] = "google"
-        config["quick_think_llm"] = "gemini-2.5-flash"
+        config["quick_think_llm"] = "gemini-3.5-flash"
     if not config.get("deep_think_provider"):
         config["deep_think_provider"] = "google"
-        config["deep_think_llm"] = "gemini-2.5-pro"
+        config["deep_think_llm"] = "gemini-3.5-flash"
 
     # Multi-Key Quota Optimization:
     # If a secondary Gemini key is provided, distribute keys across tiers
