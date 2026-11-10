@@ -24,14 +24,14 @@ load_dotenv()
 
 from tradingagents.default_config import DEFAULT_CONFIG
 from tradingagents.graph.trading_graph import TradingAgentsGraph
-from tradingagents.dataflows.date_window import latest_completed_trading_day
+from tradingagents.dataflows.date_window import get_current_date
 from tradingagents.dataflows.symbols import normalize_symbol
 
 
 def parse_args():
     parser = argparse.ArgumentParser(description="Run TradingAgents Multi-Agent Analysis for Antigravity")
     parser.add_argument("--ticker", "-t", required=True, help="Stock / Crypto / Forex ticker (e.g. NVDA, AAPL, RELIANCE.NS, BTC-USD)")
-    parser.add_argument("--date", "-d", default=None, help="Analysis date (YYYY-MM-DD). Defaults to latest completed trading day.")
+    parser.add_argument("--date", "-d", default=None, help="Analysis date (YYYY-MM-DD). Defaults to current trading day.")
     parser.add_argument("--quick-provider", default=None, help="Provider for analyst tier (e.g. google, ollama, openai)")
     parser.add_argument("--quick-llm", default=None, help="Model ID for analyst tier (e.g. gemini-2.5-flash, qwen2.5:8b)")
     parser.add_argument("--deep-provider", default=None, help="Provider for debate/decision tier (e.g. google, ollama, openai)")
@@ -44,7 +44,7 @@ def parse_args():
 def main():
     args = parse_args()
     ticker = normalize_symbol(args.ticker)
-    trade_date = args.date or latest_completed_trading_day()
+    trade_date = args.date or get_current_date()
     if isinstance(trade_date, datetime.date):
         trade_date = trade_date.strftime("%Y-%m-%d")
 
