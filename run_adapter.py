@@ -69,13 +69,16 @@ def main():
     if args.deep_llm:
         config["deep_think_llm"] = args.deep_llm
 
-    # Default to Google Gemini 3.5 Flash if no overrides
+    # Default to Google Gemini 3.5 Flash Lite if no overrides (avoids 20 RPD free tier limit on 3.5 Flash)
     if not config.get("quick_think_provider"):
         config["quick_think_provider"] = "google"
-        config["quick_think_llm"] = "gemini-3.5-flash"
+        config["quick_think_llm"] = "gemini-3.5-flash-lite"
     if not config.get("deep_think_provider"):
         config["deep_think_provider"] = "google"
-        config["deep_think_llm"] = "gemini-3.5-flash"
+        config["deep_think_llm"] = "gemini-3.5-flash-lite"
+
+    config["llm_provider"] = config["quick_think_provider"]
+    config.setdefault("llm_max_retries", 5)
 
     # Multi-Key Quota Optimization:
     # If a secondary Gemini key is provided, distribute keys across tiers
@@ -100,6 +103,7 @@ def main():
             config=config,
         )
         final_state, signal = graph.propagate(ticker, trade_date)
+        report_file = graph.save_reports(final_state, ticker)
     except Exception as e:
         print(f"\n[ERROR] Analysis failed: {e}", file=sys.stderr)
         sys.exit(1)
@@ -109,50 +113,51 @@ def main():
             "ticker": ticker,
             "trade_date": trade_date,
             "signal": signal,
-            "portfolio_decision": final_state.get("portfolio_decision", {}),
-            "trader_proposal": final_state.get("trader_proposal", {}),
-            "research_plan": final_state.get("research_plan", {}),
+            "report_path": str(report_file),
+            "final_trade_decision": final_state.get("final_trade_decision", ""),
+            "trader_investment_plan": final_state.get("trader_investment_plan", ""),
+            "investment_plan": final_state.get("investment_plan", ""),
+            "market_report": final_state.get("market_report", ""),
         }
         print(json.dumps(output_data, indent=2, default=str))
         return
 
     # Print Formatted Markdown
-    decision = final_state.get("portfolio_decision") or {}
-    trader_prop = final_state.get("trader_proposal") or {}
-    research = final_state.get("research_plan") or {}
-
-    rating = getattr(decision, "rating", signal)
-    action = getattr(trader_prop, "action", "N/A")
-    summary = getattr(decision, "executive_summary", "No executive summary available.")
-    thesis = getattr(decision, "investment_thesis", "No investment thesis available.")
-    target_price = getattr(decision, "price_target", getattr(trader_prop, "entry_price", "N/A"))
-    stop_loss = getattr(trader_prop, "stop_loss", "N/A")
-    sizing = getattr(trader_prop, "position_sizing", "Standard")
+    decision = final_state.get("final_trade_decision") or "No final trade decision produced."
+    trader_plan = final_state.get("trader_investment_plan") or ""
+    investment_plan = final_state.get("investment_plan") or ""
 
     print("\n" + "=" * 60)
     print(f"# TradingAgents Decision Report: {ticker}")
-    print(f"**Date:** {trade_date} | **Consensus Signal:** `{rating}`")
+    print(f"**Date:** {trade_date} | **Consensus Signal:** `{signal}`")
+    print(f"**Full Artifact:** `{report_file}`")
     print("=" * 60)
-    print(f"\n### 🎯 Recommended Order Specification")
-    print(f"- **Action:** `{action}`")
-    print(f"- **Target Price:** `{target_price}`")
-    print(f"- **Stop-Loss:** `{stop_loss}`")
-    print(f"- **Recommended Sizing:** `{sizing}`")
 
-    print(f"\n### 📋 Executive Summary")
-    print(summary)
+    if decision:
+        print(f"\n### 🏛️ Portfolio Manager & CIO Decision")
+        print(decision)
 
-    print(f"\n### 🏛️ Investment Thesis")
-    print(thesis)
+    if trader_plan:
+        print(f"\n### 🎯 Trading Team Order Specification")
+        print(trader_plan)
 
-    if research:
-        rationale = getattr(research, "rationale", "")
-        if rationale:
-            print(f"\n### ⚖️ Bull vs. Bear Debate Synthesis")
-            print(rationale)
+    if investment_plan:
+        print(f"\n### ⚖️ Research & Investment Thesis")
+        print(investment_plan)
+
+    for analyst_key, heading in [
+        ("market_report", "Market / Technical Analysis"),
+        ("fundamentals_report", "Fundamentals Analysis"),
+        ("news_report", "News & Catalysts"),
+        ("sentiment_report", "Social & Sentiment Analysis"),
+    ]:
+        val = final_state.get(analyst_key)
+        if val:
+            print(f"\n### 📊 {heading}")
+            print(val)
 
     print("\n" + "=" * 60)
-    print("Report complete. Order proposal is ready for user verification.")
+    print(f"Report complete. Both Markdown and HTML artifacts saved to:\n  {report_file.parent}")
 
 
 if __name__ == "__main__":
