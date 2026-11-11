@@ -14,3 +14,14 @@ tradingagents_data/
 dist/
 build/
 *.egg-info/
+
+# Artifacts, Output Reports & Data
+*.xlsx
+*.pptx
+*.csv
+*screen_results*
+reports/
+results/
+.tradingagents/
+screen_*.py
+generate_*.py
