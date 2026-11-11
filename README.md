@@ -24,6 +24,12 @@ Emulates an institutional hedge fund research desk with **5 collaborative agent 
   * Inspect generated reports with `/tradingagents-report`.
 * **Broker-Ready Execution:**
   * Directly pairs with Antigravity broker skills (such as `trader-broker` / Alpaca MCP) to execute approved trades with explicit user confirmation.
+* **Full-Index Quantitative Screener:**
+  * Automated screening engine (`screen_midcap100.py`) evaluating entire index universes (e.g. Nifty Midcap 100) across ROE, P/E multiples, debt-to-equity, 50/200 DMA trend checks, and institutional target upsides.
+* **Institutional Excel & PowerPoint Reporting:**
+  * One-click generation of polished `.xlsx` financial workbooks and `.pptx` executive presentation decks with independent valuation audits.
+* **Independent Fair Value Valuation Engine:**
+  * Multi-factor forward EPS valuation models that independently calculate target prices and stress-test them against broker consensus.
 
 ---
 
@@ -126,6 +132,12 @@ python run_adapter.py --ticker TSLA --quick-provider ollama --quick-llm qwen2.5:
 
 # Historical point-in-time backtesting
 python run_adapter.py --ticker AAPL --date 2026-09-01
+
+# Run the full 100-constituent quantitative index screener
+python screen_midcap100.py
+
+# Generate institutional Excel (.xlsx) and PowerPoint (.pptx) reports
+python generate_reports.py
 ```
 
 ---
